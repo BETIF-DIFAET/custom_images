@@ -23,8 +23,6 @@ make
 openssl-devel
 pixman-devel
 readline-devel
-redhat-lsb-core
-redhat-rpm-config
 sqlite-devel
 wget
 xz-devel
