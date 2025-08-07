@@ -4,7 +4,7 @@ COPY packages /tmp/
 
 RUN yum -y clean metadata \
     && yum install -y dnf-plugins-core \
-    && yum -y install epel-release python39 python3-pip python3-devel boost-python3 jq \
+    && yum -y install epel-release python39 python3-pip python3-devel boost-python3 jq voms-clients-cpp \
     && xargs yum -y install < /tmp/packages \
     && yum -y clean all
 
@@ -37,5 +37,10 @@ COPY ./jupyterhub-singleuser /usr/local/bin/jupyterhub-singleuser
 COPY ./spawn.sh /root/.init/spawn.sh
 RUN chmod +x /usr/local/bin/jupyterhub-singleuser.sh
 RUN chmod +x /usr/local/bin/jupyterhub-singleuser && chmod +x /root/.init/spawn.sh
+
+RUN ln -s /cvmfs/cms.cern.ch/grid/etc/vomses /etc/vomses
+RUN rm -rf /etc/grid-security/vomsdir/
+RUN ln -s /cvmfs/cms.cern.ch/grid/etc/grid-security/vomsdir/ /etc/grid-security/
+RUN ln -s /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/ /etc/grid-security/
 
 WORKDIR /opt/workspace
