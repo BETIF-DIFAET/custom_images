@@ -4,9 +4,12 @@ COPY packages /tmp/
 
 RUN yum -y clean metadata \
     && yum install -y dnf-plugins-core \
-    && yum -y install epel-release python39 python3-pip python3-devel boost-python3 jq voms-clients-cpp \
+    && yum -y install epel-release python39 python3-pip python3-devel boost-python3 jq \
     && xargs yum -y install < /tmp/packages \
     && yum -y clean all
+
+RUN yum search voms
+RUN yum -y install voms-clients-cpp
 
 WORKDIR /
 
