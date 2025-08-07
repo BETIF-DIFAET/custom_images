@@ -47,4 +47,6 @@ RUN rm -rf /etc/grid-security/vomsdir/
 RUN ln -s /cvmfs/cms.cern.ch/grid/etc/grid-security/vomsdir/ /etc/grid-security/
 RUN ln -s /cvmfs/cms.cern.ch/grid/etc/grid-security/certificates/ /etc/grid-security/
 
+COPY ./config/jupyter_notebook_config.json /opt/conda/etc/jupyter/jupyter_notebook_config.json
+
 WORKDIR /opt/workspace

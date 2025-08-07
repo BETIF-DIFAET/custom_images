@@ -1,0 +1,37 @@
+{  
+"NotebookApp": {
+    "nbserver_extensions": {
+      "rucio_jupyterlab.server": true
+    }
+  },
+        "RucioConfig": {
+            "default_instance": "escape",
+            "default_auth_type": "oidc",
+            "instances": [
+                {
+                        "name": "cms",
+                        "display_name": "CMS RUCIO",
+                        "rucio_base_url": "http://cms-rucio.cern.ch",
+                        "rucio_auth_url": "https://cms-rucio-auth.cern.ch",
+                        "rucio_webui_url": "https://cms-rucio-webui.cern.ch",
+                        "rucio_ca_cert": "/cvmfs/grid.cern.ch/etc/grid-security/certificates/",
+                        "mode": "download",
+                        "wildcard_enabled": true,
+                        "oidc_auth": "file",
+                        "oidc_file_name": "/opt/workspace/.token"
+                },
+                {
+                        "name": "escape",
+                        "display_name": "ESCAPE RUCIO",
+                        "rucio_base_url": "https://escape-rucio.cern.ch",
+                        "rucio_auth_url": "https://escape-rucio-auth.cern.ch",
+                        "rucio_webui_url": "https://escape-rucio-webui.cern.ch",
+                        "rucio_ca_cert": "/cvmfs/grid.cern.ch/etc/grid-security/certificates/",
+                        "mode": "download",
+                        "wildcard_enabled": true,
+                        "oidc_auth": "file",
+                        "oidc_file_name": "/opt/workspace/.token_ESCAPE"
+                }
+            ]
+    }
+}
