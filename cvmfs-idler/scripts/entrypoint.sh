@@ -6,5 +6,5 @@ while true; do
     cd /cvmfs/$repo
     cd ../..
   done
-  sleep 530
+  sleep 300
 done
