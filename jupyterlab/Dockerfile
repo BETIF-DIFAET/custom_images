@@ -9,7 +9,8 @@ RUN yum -y clean metadata \
     && yum -y clean all
 
 RUN yum search voms
-RUN yum -y install voms-clients-cpp
+RUN yum -y install voms-clients-cpp \
+    && yum -y clean all
 
 WORKDIR /
 
