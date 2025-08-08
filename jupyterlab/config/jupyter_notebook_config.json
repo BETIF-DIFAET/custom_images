@@ -6,7 +6,7 @@
   },
         "RucioConfig": {
             "default_instance": "escape",
-            "default_auth_type": "oidc",
+            "default_auth_type": "x509_proxy",
             "instances": [
                 {
                         "name": "cms",
@@ -21,9 +21,7 @@
                         "voms_vomsdir_path": "/cvmfs/cms.cern.ch/grid/etc/grid-security/vomsdir/",
                         "voms_vomses_path": "/cvmfs/cms.cern.ch/grid/etc/vomses/",
                         "mode": "download",
-                        "wildcard_enabled": true,
-                        "oidc_auth": "file",
-                        "oidc_file_name": "/opt/workspace/.token"
+                        "wildcard_enabled": true
                 },
                 {
                         "name": "escape",
@@ -38,9 +36,7 @@
                         "voms_vomsdir_path": "/cvmfs/cms.cern.ch/grid/etc/grid-security/vomsdir/",
                         "voms_vomses_path": "/cvmfs/cms.cern.ch/grid/etc/vomses/",
                         "mode": "download",
-                        "wildcard_enabled": true,
-                        "oidc_auth": "file",
-                        "oidc_file_name": "/opt/workspace/.token_ESCAPE"
+                        "wildcard_enabled": true
                 }
             ]
     }
