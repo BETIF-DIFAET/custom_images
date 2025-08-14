@@ -18,8 +18,8 @@
                         "vo": "cms",
                         "voms_enabled": true,
                         "voms_certdir_path": "/cvmfs/grid.cern.ch/etc/grid-security/certificates/",
-                        "voms_vomsdir_path": "/cvmfs/cms.cern.ch/grid/etc/grid-security/vomsdir/",
-                        "voms_vomses_path": "/cvmfs/cms.cern.ch/grid/etc/vomses/",
+                        "voms_vomsdir_path": "/cvmfs/grid.cern.ch/etc/grid-security/vomsdir/",
+                        "voms_vomses_path": "/cvmfs/grid.cern.ch/etc/grid-security/vomses/",
                         "mode": "download",
                         "wildcard_enabled": true
                 },
@@ -33,8 +33,8 @@
                         "vo": "escape",
                         "voms_enabled": true,
                         "voms_certdir_path": "/cvmfs/grid.cern.ch/etc/grid-security/certificates/",
-                        "voms_vomsdir_path": "/cvmfs/cms.cern.ch/grid/etc/grid-security/vomsdir/",
-                        "voms_vomses_path": "/cvmfs/cms.cern.ch/grid/etc/vomses/",
+                        "voms_vomsdir_path": "/cvmfs/grid.cern.ch/etc/grid-security/vomsdir/",
+                        "voms_vomses_path": "/cvmfs/grid.cern.ch/etc/grid-security/vomses/",
                         "mode": "download",
                         "wildcard_enabled": true
                 }
