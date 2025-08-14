@@ -26,9 +26,9 @@
                 {
                         "name": "escape",
                         "display_name": "ESCAPE RUCIO",
-                        "rucio_base_url": "https://escape-rucio.cern.ch",
-                        "rucio_auth_url": "https://escape-rucio-auth.cern.ch",
-                        "rucio_webui_url": "https://escape-rucio-webui.cern.ch",
+                        "rucio_base_url": "https://vre-rucio.cern.ch",
+                        "rucio_auth_url": "https://vre-rucio-auth.cern.ch",
+                        "rucio_webui_url": "https://vre-rucio-ui.cern.ch",
                         "rucio_ca_cert": "/cvmfs/grid.cern.ch/etc/grid-security/certificates/",
                         "vo": "escape",
                         "voms_enabled": true,
