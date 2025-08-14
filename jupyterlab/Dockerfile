@@ -40,6 +40,7 @@ COPY ./spawn.sh /root/.init/spawn.sh
 RUN chmod +x /usr/local/bin/jupyterhub-singleuser.sh
 RUN chmod +x /usr/local/bin/jupyterhub-singleuser && chmod +x /root/.init/spawn.sh
 
+RUN mkdir -p /etc/vomses
 RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomses/ /etc/vomses/
 RUN rm -rf /etc/grid-security/vomsdir/
 RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomsdir/ /etc/grid-security/
