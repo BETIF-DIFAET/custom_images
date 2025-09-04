@@ -4,100 +4,61 @@ on:
   push:
     tags:
       - "*"
-jobs:
-  jupyterlab-image-alma9:
-    runs-on: ubuntu-latest
-    #env:
-    #  DOCKER_TARGET_PLATFORM: linux/arm64
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Get Repo Owner
-        id: get_repo_owner
-        run: echo ::set-output name=repo_owner::$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
-      - name: Build container image
-        uses: docker/build-push-action@v2
-        with:
-          context: ./jupyterlab/
-          outputs: "type=registry,push=true"
-          tags: |
-            ghcr.io/${{ steps.get_repo_owner.outputs.repo_owner }}/jlab:betif-alma9-${{ env.RELEASE_VERSION }}
-          file: ./jupyterlab/Dockerfile
-          platforms: linux/amd64
-          build-args: "NOTEBOOK_VERSION=${{ env.RELEASE_VERSION }}"
 
-  jupyterlab-image-alma9-rucio:
+jobs:
+  build-images:
     runs-on: ubuntu-latest
-    #env:
-    #  DOCKER_TARGET_PLATFORM: linux/arm64
+    strategy:
+      matrix:
+        include:
+          - name: jupyterlab-image-alma9-rucio
+            context: ./jupyterlab/
+            dockerfile: ./jupyterlab/Dockerfile.rucio
+            tag_suffix: jlab:betif-alma9-rucio
+            build_args: NOTEBOOK_VERSION=${{ env.RELEASE_VERSION }}
+
+          - name: jupyterlab-image-alma9-gpu
+            context: ./jupyterlab/
+            dockerfile: ./jupyterlab/Dockerfile.gpu
+            tag_suffix: jlab:betif-alma9-gpu
+            build_args: NOTEBOOK_VERSION=${{ env.RELEASE_VERSION }}
+
+          - name: cvmfs-idler
+            context: ./cvmfs-idler/
+            dockerfile: ./cvmfs-idler/Dockerfile
+            tag_suffix: cvmfs-idler:betif
+            build_args: ""
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Set env
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Get Repo Owner
         id: get_repo_owner
-        run: echo ::set-output name=repo_owner::$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
-      - name: Build container image
+        run: echo "repo_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
         with:
-          context: ./jupyterlab/
-          outputs: "type=registry,push=true"
-          tags: |
-            ghcr.io/${{ steps.get_repo_owner.outputs.repo_owner }}/jlab:betif-alma9-rucio-${{ env.RELEASE_VERSION }}
-          file: ./jupyterlab/Dockerfile.rucio
+          context: ${{ matrix.context }}
+          outputs: type=registry,push=true
+          tags: ghcr.io/${{ env.repo_owner }}/${{ matrix.tag_suffix }}-${{ env.RELEASE_VERSION }}
+          file: ${{ matrix.dockerfile }}
           platforms: linux/amd64
-          build-args: "NOTEBOOK_VERSION=${{ env.RELEASE_VERSION }}"
-  cvmfs-idler:
-    runs-on: ubuntu-latest
-    #env:
-    #  DOCKER_TARGET_PLATFORM: linux/arm64
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Get Repo Owner
-        id: get_repo_owner
-        run: echo ::set-output name=repo_owner::$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
-      - name: Build container image
-        uses: docker/build-push-action@v2
-        with:
-          context: ./cvmfs-idler/
-          outputs: "type=registry,push=true"
-          tags: |
-            ghcr.io/${{ steps.get_repo_owner.outputs.repo_owner }}/cvmfs-idler:betif-${{ env.RELEASE_VERSION }}
-          file: ./cvmfs-idler/Dockerfile
-          platforms: linux/amd64
+          build-args: ${{ matrix.build_args }}
