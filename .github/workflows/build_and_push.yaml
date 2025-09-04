@@ -11,10 +11,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: jupyterlab-image-alma9-rucio
+          - name: jupyterlab-image-alma9-cpu
             context: ./jupyterlab/
-            dockerfile: ./jupyterlab/Dockerfile.rucio
-            tag_suffix: jlab:betif-alma9-rucio
+            dockerfile: ./jupyterlab/Dockerfile.cpu
+            tag_suffix: jlab:betif-alma9-cpu
             build_args: NOTEBOOK_VERSION=${{ env.RELEASE_VERSION }}
 
           - name: jupyterlab-image-alma9-gpu
