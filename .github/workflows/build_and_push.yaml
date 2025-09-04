@@ -15,19 +15,19 @@ jobs:
             context: ./jupyterlab/
             dockerfile: ./jupyterlab/Dockerfile.cpu
             tag_suffix: jlab:betif-alma9-cpu
-            build_args: NOTEBOOK_VERSION=${{ env.RELEASE_VERSION }}
+            has_build_args: true
 
           - name: jupyterlab-image-alma9-gpu
             context: ./jupyterlab/
             dockerfile: ./jupyterlab/Dockerfile.gpu
             tag_suffix: jlab:betif-alma9-gpu
-            build_args: NOTEBOOK_VERSION=${{ env.RELEASE_VERSION }}
+            has_build_args: true
 
           - name: cvmfs-idler
             context: ./cvmfs-idler/
             dockerfile: ./cvmfs-idler/Dockerfile
             tag_suffix: cvmfs-idler:betif
-            build_args: ""
+            has_build_args: false
 
     steps:
       - name: Checkout
@@ -61,4 +61,4 @@ jobs:
           tags: ghcr.io/${{ env.repo_owner }}/${{ matrix.tag_suffix }}-${{ env.RELEASE_VERSION }}
           file: ${{ matrix.dockerfile }}
           platforms: linux/amd64
-          build-args: ${{ matrix.build_args }}
+          build-args: ${{ matrix.has_build_arg && format('NOTEBOOK_VERSION={0}', env.RELEASE_VERSION) || '' }}
