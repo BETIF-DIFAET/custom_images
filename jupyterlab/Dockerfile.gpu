@@ -34,7 +34,7 @@ RUN conda install -c conda-forge python==3.11.13 -y
 RUN conda install -c conda-forge jupyterlab==4.0.9 -y
 RUN conda install -c conda-forge nodejs==20.9.0 -y
 RUN conda install -c conda-forge jupyterhub==4.0.2 -y
-RUN conda install -c conda-forge davix==0.8.6 xrootd==5.5.5 -y
+RUN conda install -c conda-forge davix==0.8.6 xrootd==5.5.5 gfal2==2.21.3 gfal2-util==1.9.0 python-gfal2==1.12.0 -y
 #RUN conda install -c conda-forge tensorflow=2.18.1=cuda124py311ha1f05a4_200 -y
 RUN python3 -m pip install rucio==37.7.1 rucio-clients==37.7.1 rucio-jupyterlab==1.3.1
 RUN conda clean -a -y
@@ -52,8 +52,7 @@ COPY ./spawn.sh /root/.init/spawn.sh
 RUN chmod +x /usr/local/bin/jupyterhub-singleuser.sh
 RUN chmod +x /usr/local/bin/jupyterhub-singleuser && chmod +x /root/.init/spawn.sh
 
-RUN mkdir -p /etc/vomses
-RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomses/ /etc/vomses/
+RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomses/ /etc/
 RUN rm -rf /etc/grid-security/vomsdir/
 RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomsdir/ /etc/grid-security/
 RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/certificates/ /etc/grid-security/
