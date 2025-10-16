@@ -62,7 +62,6 @@ RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/certificates/ /etc/grid-security
 
 COPY ./config/jupyter_notebook_config.json /opt/conda/etc/jupyter/jupyter_notebook_config.json
 
-COPY /opt/conda/etc/notebook/kernels/root /opt/conda/share/jupyter/kernels/root
 
 WORKDIR /opt/workspace
 
