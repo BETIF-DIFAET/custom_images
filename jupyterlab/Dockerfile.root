@@ -34,13 +34,32 @@ RUN conda clean -a -y
 
 ####### ROOT Install
 
-RUN conda install clangxx -y
+RUN dnf install -y libXft-devel libXpm-devel python-unversioned-command xrootd-client-devel xrootd-devel 
 
-RUN conda install -c conda-forge root -y
+RUN dnf config-manager --set-enabled crb
 
-RUN conda install -c conda-forge libgl -y
+RUN dnf install -y R-RInside-devel R-Rcpp-devel R-devel avahi-compat-libdns_sd-devel cfitsio-devel fftw-devel ftgl-devel glew-devel graphviz-devel gsl-devel mesa-libGL-devel mesa-libGLU-devel mysql-devel openldap-devel python3-numpy qt5-qtwebengine-devel tbb xxhash
 
+RUN  git clone --branch latest-stable --depth=1 https://github.com/root-project/root.git root_src
 
+RUN mkdir build-root /opt/root
+
+WORKDIR /build-root
+
+RUN cmake -DCMAKE_INSTALL_PREFIX=/opt/root /root_src
+
+RUN cmake --build . --target install
+
+ENV ROOTSYS=/opt/root_install
+ENV PATH=$ROOTSYS/bin:$PATH
+ENV LD_LIBRARY_PATH=$ROOTSYS/lib:$LD_LIBRARY_PATH
+ENV PYTHONPATH=$ROOTSYS/lib:$PYTHONPATH
+
+# Register ROOT’s Python kernel
+RUN source /opt/root_install/bin/thisroot.sh && \
+    python3 -m JupyROOT.kernel install --user
+
+WORKDIR /
 ####################
 
 ENV TINI_VERSION v0.19.0
