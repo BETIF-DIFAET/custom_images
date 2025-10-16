@@ -40,7 +40,6 @@ RUN conda install -c conda-forge root -y
 
 RUN conda install -c conda-forge libgl -y
 
-RUN jupyter kernelspec install /opt/conda/etc/notebook/kernels/root --sys-prefix
 
 ####################
 
@@ -64,3 +63,5 @@ RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/certificates/ /etc/grid-security
 COPY ./config/jupyter_notebook_config.json /opt/conda/etc/jupyter/jupyter_notebook_config.json
 
 WORKDIR /opt/workspace
+
+RUN jupyter kernelspec install /opt/conda/etc/notebook/kernels/root --sys-prefix
