@@ -22,6 +22,12 @@ jobs:
             dockerfile: ./jupyterlab/Dockerfile.gpu
             tag_suffix: jlab:betif-alma9-gpu
             has_build_args: true
+          
+          - name: jupyterlab-image-alma9-cpu-with-root
+            context: ./jupyterlab/
+            dockerfile: ./jupyterlab/Dockerfile.root
+            tag_suffix: jlab:betif-alma9-cpu-with-root
+            has_build_args: true
 
           - name: cvmfs-idler
             context: ./cvmfs-idler/
