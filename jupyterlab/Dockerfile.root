@@ -50,7 +50,7 @@ RUN cmake -DCMAKE_INSTALL_PREFIX=/opt/root /root_src
 
 RUN cmake --build . --target install -- -j 32
 
-ENV ROOTSYS=/opt/root_install
+ENV ROOTSYS=/opt/root
 ENV PATH=$ROOTSYS/bin:$PATH
 ENV LD_LIBRARY_PATH=$ROOTSYS/lib:$LD_LIBRARY_PATH
 ENV PYTHONPATH=$ROOTSYS/lib:$PYTHONPATH
