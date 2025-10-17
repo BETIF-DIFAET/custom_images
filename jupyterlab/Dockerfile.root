@@ -56,7 +56,7 @@ ENV LD_LIBRARY_PATH=$ROOTSYS/lib:$LD_LIBRARY_PATH
 ENV PYTHONPATH=$ROOTSYS/lib:$PYTHONPATH
 
 # Register ROOT’s Python kernel
-RUN source /opt/root_install/bin/thisroot.sh && \
+RUN source /opt/root/bin/thisroot.sh && \
     python3 -m JupyROOT.kernel install --user
 
 WORKDIR /
