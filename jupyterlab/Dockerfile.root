@@ -58,6 +58,7 @@ ENV PYTHONPATH=$ROOTSYS/lib:$PYTHONPATH
 # Register ROOT’s Python kernel
 RUN source /opt/root/bin/thisroot.sh && \
     /opt/root/bin/root-config --help && \
+    mkdir -p /opt/conda/share/jupyter/kernels/root && \
     cp -r /opt/root/etc/notebook/kernels/root/* /opt/conda/share/jupyter/kernels/root/ && \
     sed -i 's|{ROOTSYS}|/opt/root|g' /opt/conda/share/jupyter/kernels/root/kernel.json
 
