@@ -28,6 +28,7 @@ RUN conda install -c conda-forge jupyterlab==4.0.9 -y
 RUN conda install -c conda-forge nodejs==20.9.0 -y
 RUN conda install -c conda-forge jupyterhub==4.0.2 -y
 RUN conda install -c conda-forge davix==0.8.6 xrootd==5.5.5 gfal2==2.21.3 gfal2-util==1.9.0 python-gfal2==1.12.0 -y
+RUN conda install -c conda-forge apptainer==1.4.4 -y
 #RUN conda install -c conda-forge tensorflow=2.18.1=cpu_py311hbca4264_0 -y
 RUN python3 -m pip install rucio==37.7.1 rucio-clients==37.7.1 rucio-jupyterlab==1.4.0 ksmm==1.0.0
 RUN conda clean -a -y
