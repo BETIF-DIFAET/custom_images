@@ -1,4 +1,4 @@
-name: build-images
+name: manual-build-images
 
 on:
   workflow_dispatch:
