@@ -7,14 +7,14 @@
     "-B",
     "/opt/workspace:/opt/workspace",
     "--cleanenv",
-    "/cvmfs/unpacked.cern.ch/registry.hub.docker.com/dodasts/root-in-docker:ubuntu22-kernel-v1",
+    "/cvmfs/unpacked.infn.it/harbor.cloud.infn.it/unpacked/betif_difaet/kernel-default:latest",
     "python3",
     "-m",
     "ipykernel",
     "-f",
     "{connection_file}"
   ],
-  "display_name": "Singularity kernel - ROOT 6.27",
+  "display_name": "Singularity kernel - Default",
   "language": "python",
   "metadata": {
     "template": {
@@ -40,7 +40,7 @@
         "singularity_image": {
           "type": "string",
           "title": "Configure singularity image to load the kernel from",
-          "default": "/cvmfs/unpacked.cern.ch/registry.hub.docker.com/dodasts/root-in-docker:ubuntu22-kernel-v1"
+          "default": "/cvmfs/unpacked.infn.it/harbor.cloud.infn.it/unpacked/betif_difaet/kernel-default:latest"
         }
     }
   }
