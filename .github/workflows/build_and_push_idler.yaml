@@ -1,23 +1,21 @@
-name: build-root-image
+name: build-cpu-image
 
 on:
   push:
     tags:
       - "*"
-  workflow_dispatch:
-
 
 jobs:
   build-images:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix:
-        include:          
-          - name: jupyterlab-image-alma9-cpu-with-root
-            context: ./jupyterlab/
-            dockerfile: ./jupyterlab/Dockerfile.root
-            tag_suffix: jlab:betif-alma9-cpu-with-root
-            has_build_args: true
+        include:     
+          - name: cvmfs-idler
+            context: ./cvmfs-idler/
+            dockerfile: ./cvmfs-idler/Dockerfile
+            tag_suffix: cvmfs-idler:betif
+            has_build_args: false
 
     steps:
       - name: Checkout
