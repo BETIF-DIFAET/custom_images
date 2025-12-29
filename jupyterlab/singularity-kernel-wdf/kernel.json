@@ -7,7 +7,7 @@
     "-B",
     "/opt/workspace:/opt/workspace",
     "--cleanenv",
-    "/cvmfs/unpacked.cern.ch/ghcr.io/betif_difaet/kernel-wdf:latest",
+    "/cvmfs/unpacked.cern.ch/ghcr.io/betif-difaet/kernel-wdf:latest",
     "/opt/conda/envs/kernel/bin/python3",
     "-m",
     "ipykernel",
@@ -40,7 +40,7 @@
         "singularity_image": {
           "type": "string",
           "title": "Configure singularity image to load the kernel from",
-          "default": "/cvmfs/unpacked.cern.ch/ghcr.io/betif_difaet/kernel-wdf:latest"
+          "default": "/cvmfs/unpacked.cern.ch/ghcr.io/betif-difaet/kernel-wdf:latest"
         }
     }
   }
