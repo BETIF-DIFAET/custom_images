@@ -74,7 +74,7 @@ RUN chmod +x /etc/profile.d/root_login.sh
 WORKDIR /
 ####################
 
-ENV TINI_VERSION v0.19.0
+ENV TINI_VERSION=v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /bin/tini
 RUN chmod +x /bin/tini
 
@@ -94,6 +94,10 @@ RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/certificates/ /etc/grid-security
 COPY ./config/jupyter_notebook_config.json /opt/conda/etc/jupyter/jupyter_notebook_config.json
 COPY ./singularity-kernel/ /opt/conda/share/jupyter/kernels/singularity-kernel/
 RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel/
+COPY ./singularity-kernel-ROOT/ /opt/conda/share/jupyter/kernels/singularity-kernel-ROOT/
+RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-ROOT/ 
+COPY ./singularity-kernel-wdf/ /opt/conda/share/jupyter/kernels/singularity-kernel-wdf/
+RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-wdf/ 
 
 
 WORKDIR /opt/workspace
