@@ -11,23 +11,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: jupyterlab-image-alma9-cpu
-            context: ./jupyterlab/
-            dockerfile: ./jupyterlab/Dockerfile.cpu
-            tag_suffix: jlab:betif-alma9-cpu
-            has_build_args: true
-
           - name: jupyterlab-image-alma9-gpu
             context: ./jupyterlab/
             dockerfile: ./jupyterlab/Dockerfile.gpu
             tag_suffix: jlab:betif-alma9-gpu
             has_build_args: true
-          
-          - name: cvmfs-idler
-            context: ./cvmfs-idler/
-            dockerfile: ./cvmfs-idler/Dockerfile
-            tag_suffix: cvmfs-idler:betif
-            has_build_args: false
 
     steps:
       - name: Checkout
