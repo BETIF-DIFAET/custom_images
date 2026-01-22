@@ -31,9 +31,9 @@ RUN conda init bash
 RUN echo "conda activate base" >> ~/.bashrc
 
 RUN conda install -c conda-forge python==3.11.13 -y
-RUN conda install -c conda-forge jupyterlab==4.0.9 -y
+RUN conda install -c conda-forge jupyterlab==4.5.2 -y
 RUN conda install -c conda-forge nodejs==20.9.0 -y
-RUN conda install -c conda-forge jupyterhub==4.0.2 -y
+RUN conda install -c conda-forge jupyterhub==5.4.3 -y
 RUN conda install -c conda-forge davix==0.8.6 xrootd==5.5.5 gfal2==2.21.3 gfal2-util==1.9.0 python-gfal2==1.12.0 -y
 RUN conda install -c conda-forge apptainer==1.4.4 -y
 #RUN conda install -c conda-forge tensorflow=2.18.1=cuda124py311ha1f05a4_200 -y
