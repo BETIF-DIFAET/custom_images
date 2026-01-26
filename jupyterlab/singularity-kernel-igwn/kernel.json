@@ -14,7 +14,7 @@
     "-f",
     "{connection_file}"
   ],
-  "display_name": "Singularity kernel - Default",
+  "display_name": "Singularity kernel - IGWN",
   "language": "python",
   "metadata": {
     "template": {
