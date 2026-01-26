@@ -58,5 +58,7 @@ COPY ./singularity-kernel-ROOT/ /opt/conda/share/jupyter/kernels/singularity-ker
 RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-ROOT/ 
 COPY ./singularity-kernel-wdf/ /opt/conda/share/jupyter/kernels/singularity-kernel-wdf/
 RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-wdf/ 
+COPY ./singularity-kernel-igwn/ /opt/conda/share/jupyter/kernels/singularity-kernel-igwn/
+RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-igwn/
 
 WORKDIR /opt/workspace
