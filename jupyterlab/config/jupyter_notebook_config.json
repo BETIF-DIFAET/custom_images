@@ -37,7 +37,18 @@
                         "voms_vomses_path": "/cvmfs/grid.cern.ch/etc/grid-security/vomses/",
                         "mode": "download",
                         "wildcard_enabled": true
-                }
+                },
+		{
+		        "name": "et",
+		        "display_name": "ET RUCIO",
+		        "rucio_base_url": "https://et-rucio-server.to.infn.it:443",
+		        "rucio_auth_url": "https://et-rucio-server.to.infn.it:443",
+		        "rucio_ca_cert": "/cvmfs/grid.cern.ch/etc/grid-security/certificates/",
+			"oidc_auth": "file",
+			"oidc_file_name": "/tmp/token",
+		        "mode": "download",
+		        "wildcard_enabled": true
+		}
             ]
     }
 }
