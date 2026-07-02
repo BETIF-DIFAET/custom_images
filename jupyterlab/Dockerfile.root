@@ -39,7 +39,7 @@ RUN dnf install -y libXft-devel libXpm-devel python-unversioned-command xrootd-c
 
 RUN dnf config-manager --set-enabled crb
 
-RUN dnf install -y R-RInside-devel R-Rcpp-devel R-devel avahi-compat-libdns_sd-devel cfitsio-devel fftw-devel ftgl-devel glew-devel graphviz-devel gsl-devel mesa-libGL-devel mesa-libGLU-devel mysql-devel openldap-devel python3-numpy qt5-qtwebengine-devel tbb xxhash giflib-devel
+RUN dnf install -y R-RInside-devel R-Rcpp-devel R-devel avahi-compat-libdns_sd-devel cfitsio-devel fftw-devel ftgl-devel glew-devel graphviz-devel gsl-devel mesa-libGL-devel mesa-libGLU-devel mysql-devel openldap-devel python3-numpy qt5-qtwebengine-devel tbb xxhash giflib-devel gl2ps-devel
 
 RUN  git clone --branch latest-stable --depth=1 https://github.com/root-project/root.git root_src
 
