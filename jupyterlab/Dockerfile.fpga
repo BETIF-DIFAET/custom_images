@@ -68,6 +68,48 @@ RUN dkms install \
 
 RUN rm -f "/tmp/${XRT_RPM}"
 
+
+RUN dnf install -y \
+        https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
+    dnf clean all
+
+RUN cat > /etc/yum.repos.d/xlnx.repo <<'EOF'
+[Xilinx]
+name=Xilinx Package Manager
+baseurl=https://packages.xilinx.com/artifactory/rpm-packages/$basearch/$releasever
+enabled=1
+gpgcheck=0
+sslverify=1
+
+[Xilinx-NoArch]
+name=Xilinx Package Manager (NoArch)
+baseurl=https://packages.xilinx.com/artifactory/rpm-packages/noarch
+enabled=1
+gpgcheck=0
+sslverify=1
+EOF
+
+RUN dnf install -y \
+        xilinx-u55c-gen3x16-xdma-base.noarch \
+        xilinx-cmc-u55.noarch \
+        xilinx-sc-fw-u55.noarch \
+        xilinx-u55c-gen3x16-xdma-validate.noarch && \
+        xilinx-cmc-u200-u250.noarch && \
+        xilinx-sc-fw-u200-u250.noarch && \
+        xilinx-u250-gen3x16-base.noarch && \
+        xilinx-u250-gen3x16-xdma-shell.noarch && \
+        xilinx-u250-gen3x16-xdma-validate.noarch && \
+    dnf clean all
+
+
+
+
+
+
+
+
+
+
 RUN dnf search voms
 RUN dnf -y install voms-clients-cpp \
     && dnf -y clean all
