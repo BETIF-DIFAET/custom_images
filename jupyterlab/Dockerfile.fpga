@@ -93,11 +93,11 @@ RUN dnf install -y \
         xilinx-u55c-gen3x16-xdma-base.noarch \
         xilinx-cmc-u55.noarch \
         xilinx-sc-fw-u55.noarch \
-        xilinx-u55c-gen3x16-xdma-validate.noarch && \
-        xilinx-cmc-u200-u250.noarch && \
-        xilinx-sc-fw-u200-u250.noarch && \
-        xilinx-u250-gen3x16-base.noarch && \
-        xilinx-u250-gen3x16-xdma-shell.noarch && \
+        xilinx-u55c-gen3x16-xdma-validate.noarch  \
+        xilinx-cmc-u200-u250.noarch  \
+        xilinx-sc-fw-u200-u250.noarch  \
+        xilinx-u250-gen3x16-base.noarch  \
+        xilinx-u250-gen3x16-xdma-shell.noarch  \
         xilinx-u250-gen3x16-xdma-validate.noarch && \
     dnf clean all
 
