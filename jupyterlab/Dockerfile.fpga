@@ -15,6 +15,11 @@ RUN dnf install -y \
         dnf-plugins-core \
         epel-release python39 python3-pip python3-devel boost-python3 jq procps
 
+RUN yum install -y https://repo.osg-htc.org/osg/25-main/osg-25-main-el9-release-latest.rpm \
+    && curl -LO https://software.igwn.org/lscsoft/rocky/9/production/x86_64/os/Packages/i/igwn-production-config-9-5.el9.noarch.rpm \
+    && rpm --install igwn-production-config-9-5.el9.noarch.rpm \
+    && yum install -y htgettoken python3-igwn-auth-utils gwdatafind pelican && rm igwn-production-config-9-5.el9.noarch.rpm
+
 RUN xargs dnf -y install < /tmp/packages 
 
 

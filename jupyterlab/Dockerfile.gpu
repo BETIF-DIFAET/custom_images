@@ -4,7 +4,11 @@ COPY packages /tmp/
 
 RUN yum -y clean metadata \
     && yum install -y dnf-plugins-core \
+    && yum install -y https://repo.osg-htc.org/osg/25-main/osg-25-main-el9-release-latest.rpm \
+    && curl -LO https://software.igwn.org/lscsoft/rocky/9/production/x86_64/os/Packages/i/igwn-production-config-9-5.el9.noarch.rpm \
+    && rpm --install igwn-production-config-9-5.el9.noarch.rpm \
     && yum -y install epel-release python39 pciutils python3-pip python3-devel boost-python3 jq procps \
+    && yum install -y python3-igwn-auth-utils htgettoken gwdatafind pelican && rm igwn-production-config-9-5.el9.noarch.rpm \
     && xargs yum -y install < /tmp/packages
 
 RUN dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel9/x86_64/cuda-rhel9.repo \
