@@ -5,8 +5,8 @@
     }
   },
         "RucioConfig": {
-            "default_instance": "escape",
-            "default_auth_type": "x509_proxy",
+            "default_instance": "et",
+            "default_auth_type": "oidc",
             "instances": [
                 {
                         "name": "cms",
