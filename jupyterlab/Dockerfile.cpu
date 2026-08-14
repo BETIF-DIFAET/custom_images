@@ -65,4 +65,6 @@ RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kern
 COPY ./singularity-kernel-igwn/ /opt/conda/share/jupyter/kernels/singularity-kernel-igwn/
 RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-igwn/
 
+COPY ./config/rucio.cfg /opt/rucio/etc/rucio.cfg
+
 WORKDIR /opt/workspace
