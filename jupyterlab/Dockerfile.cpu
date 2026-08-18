@@ -1,69 +1,95 @@
 FROM almalinux:9
 
-COPY packages /tmp/
+ARG TINI_VERSION=v0.19.0
 
-RUN yum -y clean metadata \
-    && yum install -y dnf-plugins-core \
-    && yum install -y https://repo.osg-htc.org/osg/25-main/osg-25-main-el9-release-latest.rpm \
-    && curl -LO https://software.igwn.org/lscsoft/rocky/9/production/x86_64/os/Packages/i/igwn-production-config-9-5.el9.noarch.rpm \
-    && rpm --install igwn-production-config-9-5.el9.noarch.rpm \
-    && yum -y install epel-release python39 python3-pip python3-devel boost-python3 jq procps \
-    && yum install -y python3-igwn-auth-utils htgettoken gwdatafind pelican && rm igwn-production-config-9-5.el9.noarch.rpm \
+RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
+    yum -y clean metadata \
+    && yum -y install dnf-plugins-core \
+    && yum -y install https://repo.osg-htc.org/osg/25-main/osg-25-main-el9-release-latest.rpm \
+    && curl -LO \
+        https://software.igwn.org/lscsoft/rocky/9/production/x86_64/os/Packages/i/igwn-production-config-9-5.el9.noarch.rpm \
+    && rpm --install igwn-production-config-9-5.el9.noarch.rpm  \
+    && dnf -y install \
+        epel-release \
+        python39 \
+        python3-pip \
+        python3-devel \
+        boost-python3 \
+        jq \
+        procps \
+    && dnf -y install \
+        python3-igwn-auth-utils \
+        htgettoken \
+        gwdatafind \
+        pelican \
     && xargs yum -y install < /tmp/packages \
-    && yum -y clean all
-
-RUN yum search voms
-RUN yum -y install voms-clients-cpp \
-    && yum -y clean all
+    && dnf search voms \
+    && dnf install -y voms-clients-cpp \  
+    && curl -fsSL \
+        "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini" \
+        -o /bin/tini \
+    && chmod 0755 /bin/tini \
+    && rm -f igwn-production-config-9-5.el9.noarch.rpm  \
+    && yum -y clean all \
+    && rm -rf /var/cache/dnf /var/cache/yum /var/tmp/*
 
 WORKDIR /
 
 ENV CONDA_DIR=/opt/conda
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py311_25.3.1-1-Linux-x86_64.sh -O ~/miniconda.sh && \
-    /bin/bash ~/miniconda.sh -b -p /opt/conda
-# Put conda in path so we can use conda activate
 ENV PATH=$CONDA_DIR/bin:$PATH
 
-RUN conda init bash
-RUN echo "conda activate base" >> ~/.bashrc
+RUN curl -fsSL \
+        https://repo.anaconda.com/miniconda/Miniconda3-py311_25.3.1-1-Linux-x86_64.sh \
+        -o /tmp/miniconda.sh \
+    && /bin/bash /tmp/miniconda.sh -b -p "$CONDA_DIR" \
+    && rm -f /tmp/miniconda.sh \
+    && conda init bash \
+    && printf '\nconda activate base\n' >> /root/.bashrc \
+    && conda install -y -c conda-forge \
+        python==3.11.13 \
+        jupyterlab==4.5.2 \
+        nodejs==20.9.0 \
+        jupyterhub==5.4.3 \
+        davix==0.8.6 \
+        xrootd==5.5.5 \
+        gfal2==2.21.3 \
+        gfal2-util==1.9.0 \
+        python-gfal2==1.12.0 \
+        apptainer==1.4.4 \
+    && python3 -m pip install --no-cache-dir \
+        rucio==41.1.1 \
+        rucio-clients==41.1.1 \
+        rucio-jupyterlab==41.0.0 \
+        ksmm==1.0.0 \
+    && conda clean -afy \
+    && rm -rf /root/.cache /tmp/*
 
-RUN conda install -c conda-forge python==3.11.13 -y
-RUN conda install -c conda-forge jupyterlab==4.5.2 -y
-RUN conda install -c conda-forge nodejs==20.9.0 -y
-RUN conda install -c conda-forge jupyterhub==5.4.3 -y
-RUN conda install -c conda-forge davix==0.8.6 xrootd==5.5.5 gfal2==2.21.3 gfal2-util==1.9.0 python-gfal2==1.12.0 -y
-RUN conda install -c conda-forge apptainer==1.4.4 -y
-#RUN conda install -c conda-forge tensorflow=2.18.1=cpu_py311hbca4264_0 -y
-RUN python3 -m pip install rucio==41.1.1 rucio-clients==41.1.1 rucio-jupyterlab==41.0.0 ksmm==1.0.0
-RUN conda clean -a -y
-
-
-ENV TINI_VERSION=v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /bin/tini
-RUN chmod +x /bin/tini
-
-RUN mkdir -p /root/.ipython
+RUN mkdir -p /root/.ipython /root/.init
 
 COPY ./jupyterhub-singleuser.sh /usr/local/bin/jupyterhub-singleuser.sh
 COPY ./jupyterhub-singleuser /usr/local/bin/jupyterhub-singleuser
 COPY ./spawn.sh /root/.init/spawn.sh
-RUN chmod +x /usr/local/bin/jupyterhub-singleuser.sh
-RUN chmod +x /usr/local/bin/jupyterhub-singleuser && chmod +x /root/.init/spawn.sh
 
-RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomses/ /etc/
-RUN rm -rf /etc/grid-security/vomsdir/
-RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomsdir/ /etc/grid-security/
-RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/certificates/ /etc/grid-security/
+RUN chmod +x \
+        /usr/local/bin/jupyterhub-singleuser.sh \
+        /usr/local/bin/jupyterhub-singleuser \
+        /root/.init/spawn.sh \
+    && ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomses/ /etc/ \
+    && rm -rf /etc/grid-security/vomsdir/ \
+    && ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomsdir/ /etc/grid-security/ \
+    && ln -s /cvmfs/grid.cern.ch/etc/grid-security/certificates/ /etc/grid-security/
 
 COPY ./config/jupyter_notebook_config.json /opt/conda/etc/jupyter/jupyter_notebook_config.json
 COPY ./singularity-kernel/ /opt/conda/share/jupyter/kernels/singularity-kernel/
-RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel/
 COPY ./singularity-kernel-ROOT/ /opt/conda/share/jupyter/kernels/singularity-kernel-ROOT/
-RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-ROOT/ 
 COPY ./singularity-kernel-wdf/ /opt/conda/share/jupyter/kernels/singularity-kernel-wdf/
-RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-wdf/ 
 COPY ./singularity-kernel-igwn/ /opt/conda/share/jupyter/kernels/singularity-kernel-igwn/
-RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-igwn/
+
+# Each kernelspec install can rewrite Jupyter metadata; keep them in one layer.
+RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel/ \
+    && jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-ROOT/ \
+    && jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-wdf/ \
+    && jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-igwn/
 
 COPY ./config/rucio.cfg /opt/rucio/etc/rucio.cfg
 
