@@ -1,76 +1,96 @@
 FROM almalinux:9
 
-COPY packages /tmp/
-
-RUN yum -y clean metadata \
-    && yum install -y dnf-plugins-core \
-    && yum install -y https://repo.osg-htc.org/osg/25-main/osg-25-main-el9-release-latest.rpm \
-    && curl -LO https://software.igwn.org/lscsoft/rocky/9/production/x86_64/os/Packages/i/igwn-production-config-9-5.el9.noarch.rpm \
+RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
+    dnf -y clean metadata \
+    && dnf -y install dnf-plugins-core \
+    &&  dnf -y install https://repo.osg-htc.org/osg/25-main/osg-25-main-el9-release-latest.rpm \
+    && curl -LO \
+        https://software.igwn.org/lscsoft/rocky/9/production/x86_64/os/Packages/i/igwn-production-config-9-5.el9.noarch.rpm \
     && rpm --install igwn-production-config-9-5.el9.noarch.rpm \
-    && yum -y install epel-release python39 pciutils python3-pip python3-devel boost-python3 jq procps \
-    && yum install -y python3-igwn-auth-utils htgettoken gwdatafind pelican && rm igwn-production-config-9-5.el9.noarch.rpm \
-    && xargs yum -y install < /tmp/packages
-
-RUN dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel9/x86_64/cuda-rhel9.repo \
+    && rm -f igwn-production-config-9-5.el9.noarch.rpm \
+    && dnf -y install \
+        epel-release \
+        python39 \
+        pciutils \
+        python3-pip \
+        python3-devel \
+        boost-python3 \
+        jq \
+        procps \
+    && dnf -y install python3-igwn-auth-utils \
+        htgettoken \
+        gwdatafind \
+        pelican \
+    && xargs -r dnf -y install < /tmp/packages \
+    && dnf config-manager --add-repo \
+        https://developer.download.nvidia.com/compute/cuda/repos/rhel9/x86_64/cuda-rhel9.repo \
+    && dnf -y install cuda-toolkit-12-4 \
+    && dnf -y module install nvidia-driver:580-dkms \
+    && dnf search voms \
+    && dnf -y install voms-clients-cpp \
     && dnf -y clean all \
-    && dnf -y install cuda-toolkit-12-4 \ 
-    && dnf -y module install nvidia-driver:580-dkms
-
-RUN yum search voms
-RUN yum -y install voms-clients-cpp \
-    && yum -y clean all
+    && rm -rf /var/cache/dnf /var/cache/yum
 
 WORKDIR /
 
 ENV CONDA_DIR=/opt/conda
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py311_25.3.1-1-Linux-x86_64.sh -O ~/miniconda.sh && \
-    /bin/bash ~/miniconda.sh -b -p /opt/conda
-# Put conda in path so we can use conda activate
-ENV PATH=$CONDA_DIR/bin:$PATH
-ENV PATH=/usr/local/cuda-12.4/bin:$PATH
+ENV PATH=/opt/conda/bin:/usr/local/cuda-12.4/bin:$PATH
 ENV LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:$LD_LIBRARY_PATH
-ENV CONDA_OVERRIDE_CUDA="12.4"
+ENV CONDA_OVERRIDE_CUDA=12.4
 
-RUN conda init bash
-RUN echo "conda activate base" >> ~/.bashrc
+RUN curl -fsSL \
+        https://repo.anaconda.com/miniconda/Miniconda3-py311_25.3.1-1-Linux-x86_64.sh \
+        -o /tmp/miniconda.sh \
+    && /bin/bash /tmp/miniconda.sh -b -p "$CONDA_DIR" \
+    && rm -f /tmp/miniconda.sh \
+    && conda install -y -c conda-forge \
+        python==3.11.13 \
+        jupyterlab==4.5.2 \
+        nodejs==20.9.0 \
+        jupyterhub==5.4.3 \
+        davix==0.8.6 \
+        xrootd==5.5.5 \
+        gfal2==2.21.3 \
+        gfal2-util==1.9.0 \
+        python-gfal2==1.12.0 \
+        apptainer==1.4.4 \
+    && python -m pip install --no-cache-dir \
+        rucio==41.1.1 \
+        rucio-clients==41.1.1 \
+        rucio-jupyterlab==41.0.0 \
+        ksmm==1.0.0 \
+    && conda clean -afy \
+    && rm -rf /root/.cache/pip
 
-RUN conda install -c conda-forge python==3.11.13 -y
-RUN conda install -c conda-forge jupyterlab==4.5.2 -y
-RUN conda install -c conda-forge nodejs==20.9.0 -y
-RUN conda install -c conda-forge jupyterhub==5.4.3 -y
-RUN conda install -c conda-forge davix==0.8.6 xrootd==5.5.5 gfal2==2.21.3 gfal2-util==1.9.0 python-gfal2==1.12.0 -y
-RUN conda install -c conda-forge apptainer==1.4.4 -y
-#RUN conda install -c conda-forge tensorflow=2.18.1=cuda124py311ha1f05a4_200 -y
-RUN python3 -m pip install rucio==41.1.1 rucio-clients==41.1.1 rucio-jupyterlab==41.0.0 ksmm==1.0.0
-RUN conda clean -a -y
-
+RUN printf '\nconda activate base\n' >> /root/.bashrc \
+    && mkdir -p /root/.ipython /root/.init
 
 ENV TINI_VERSION=v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /bin/tini
-RUN chmod +x /bin/tini
+RUN curl -fsSL \
+        "https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini" \
+        -o /bin/tini \
+    && chmod +x /bin/tini
 
-RUN mkdir -p /root/.ipython
+COPY --chmod=0755 ./jupyterhub-singleuser.sh /usr/local/bin/jupyterhub-singleuser.sh
+COPY --chmod=0755 ./jupyterhub-singleuser /usr/local/bin/jupyterhub-singleuser
+COPY --chmod=0755 ./spawn.sh /root/.init/spawn.sh
 
-COPY ./jupyterhub-singleuser.sh /usr/local/bin/jupyterhub-singleuser.sh
-COPY ./jupyterhub-singleuser /usr/local/bin/jupyterhub-singleuser
-COPY ./spawn.sh /root/.init/spawn.sh
-RUN chmod +x /usr/local/bin/jupyterhub-singleuser.sh
-RUN chmod +x /usr/local/bin/jupyterhub-singleuser && chmod +x /root/.init/spawn.sh
-
-RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomses/ /etc/
-RUN rm -rf /etc/grid-security/vomsdir/
-RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomsdir/ /etc/grid-security/
-RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/certificates/ /etc/grid-security/
+RUN ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomses/ /etc/ \
+    && rm -rf /etc/grid-security/vomsdir/ \
+    && ln -s /cvmfs/grid.cern.ch/etc/grid-security/vomsdir/ /etc/grid-security/ \
+    && ln -s /cvmfs/grid.cern.ch/etc/grid-security/certificates/ /etc/grid-security/
 
 COPY ./config/jupyter_notebook_config.json /opt/conda/etc/jupyter/jupyter_notebook_config.json
+
 COPY ./singularity-kernel/ /opt/conda/share/jupyter/kernels/singularity-kernel/
-RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel/
 COPY ./singularity-kernel-ROOT/ /opt/conda/share/jupyter/kernels/singularity-kernel-ROOT/
-RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-ROOT/ 
 COPY ./singularity-kernel-wdf/ /opt/conda/share/jupyter/kernels/singularity-kernel-wdf/
-RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-wdf/ 
 COPY ./singularity-kernel-igwn/ /opt/conda/share/jupyter/kernels/singularity-kernel-igwn/
-RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-igwn/
+
+RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel/ \
+    && jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-ROOT/ \
+    && jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-wdf/ \
+    && jupyter kernelspec install /opt/conda/share/jupyter/kernels/singularity-kernel-igwn/
 
 COPY ./config/rucio.cfg /opt/rucio/etc/rucio.cfg
 
